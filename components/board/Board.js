@@ -97,13 +97,18 @@ class Board extends Component {
 			}
 		} else{
 			if(piece.color == "white"){
-				possible.push(this.vert[Number(y)+1]+String(x));
+				var moveCheckSpace = this.vert[Number(y)+1]+String(x);
 				var killCheck1 = this.vert[Number(y)+1]+String(Number(x)+1);
 				var killCheck2 = this.vert[Number(y)+1]+String(Number(x)-1);
 			} else{
-				possible.push(this.vert[Number(y)-1]+String(x));
+				var moveCheckSpace = this.vert[Number(y)-1]+String(x);
 				var killCheck1 = this.vert[Number(y)-1]+String(Number(x)-1);
 				var killCheck2 = this.vert[Number(y)-1]+String(Number(x)+1);
+			}
+
+			var moveCheck = _.find(this.state.pieces, ['position', moveCheckSpace]);
+			if(!moveCheck){
+				possible.push(moveCheckSpace);
 			}
 			killCheck1 = _.find(this.state.pieces, ['position', killCheck1]);
 			killCheck2 = _.find(this.state.pieces, ['position', killCheck2]);
@@ -151,15 +156,15 @@ class Board extends Component {
 		possible = possible.concat(this.acrossPossible(piece, "yd"));
 		possible = possible.concat(this.acrossPossible(piece, "xl"));
 		possible = possible.concat(this.acrossPossible(piece, "xr"));
-		possible = this.validateDirection(piece,[ ...new Set(possible) ],"u");
-		possible = this.validateDirection(piece,possible,"d");
-		possible = this.validateDirection(piece,possible,"l");
-		possible = this.validateDirection(piece,possible,"r");
+		possible = this.validateAcross(piece,[ ...new Set(possible) ],"u");
+		possible = this.validateAcross(piece,possible,"d");
+		possible = this.validateAcross(piece,possible,"l");
+		possible = this.validateAcross(piece,possible,"r");
 		return possible;
 	}
 
 
-	validateDirection(piece,possible,direction){
+	validateAcross(piece,possible,direction){
 		var y = Number(this.vert.indexOf(piece.position[0]))+1;
 		var x = Number(piece.position[1]);
 		var remove = [];

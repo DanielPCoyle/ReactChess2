@@ -1,0 +1,286 @@
+[
+  {
+    "key":0,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b1"
+  },
+  {
+    "key":1,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b2"
+  },
+  {
+    "key":2,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b3"
+  },
+  {
+    "key":3,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b4"
+  },
+  {
+    "key":4,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b5"
+  },
+  {
+    "key":5,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b6"
+  },
+  {
+    "key":6,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b7"
+  },
+  {
+    "key":7,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "white",
+    "position": "b8"
+  },
+  {
+    "key":8,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g1"
+  },
+  {
+    "key":9,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g2"
+  },
+  {
+    "key":10,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g3"
+  },
+  {
+    "key":11,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g4"
+  },
+  {
+    "key":12,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g5"
+  },
+  {
+    "key":13,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g6"
+  },
+  {
+    "key":14,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g7"
+  },
+  {
+    "key":15,
+    "piece": "pawn",
+    "move":[
+      {"direction":"forward", "spaces" : 1},
+      {"direction":"forward", "spaces" : 2, "initOnly": true},
+    ],
+    "kill":{"direction":"forward-diagonal", "spaces" : 1},
+    "color": "black",
+    "position": "g8"
+  },
+  {
+    "key":16,
+    "piece": "rook",
+    "move":[{"direction":["forward","backwards","left","right"], "spaces":8}],
+    "color": "black",
+    "position": "h8"
+  },
+  {
+    "key":17,
+    "piece": "rook",
+    "move":[{"direction":["forward","backwards","left","right"], "spaces":8}],
+    "color": "white",
+    "position": "a1"
+  },
+  {
+    "key":18,
+    "piece": "rook",
+    "move":[{"direction":["forward","backwards","left","right"], "spaces":8}],
+    "color": "black",
+    "position": "h1"
+  },
+  {
+    "key":19,
+    "piece": "rook",
+    "move":[{"direction":["forward","backwards","left","right"], "spaces":8}],
+    "color": "white",
+    "position": "a8"
+  },
+  {
+    "key":20,
+    "piece": "knight",
+    "color": "white",
+    "position": "a2"
+  },
+  {
+    "key":21,
+    "piece": "knight",
+    "color": "white",
+    "position": "a7"
+  },
+  {
+    "key":22,
+    "piece": "knight",
+    "color": "black",
+    "position": "h2"
+  },
+  {
+    "key":23,
+    "piece": "knight",
+    "color": "black",
+    "position": "h7"
+  },
+  {
+    "key":24,
+    "piece": "bishop",
+    "move":[{"direction":"diangnol", "spaces":8}],
+    "color": "white",
+    "position": "a3"
+  },
+  {
+    "key":25,
+    "piece": "bishop",
+    "move":[{"direction":"diangnol", "spaces":8}],
+    "color": "white",
+    "position": "a6"
+  },
+  {
+    "key":26,
+    "piece": "bishop",
+    "move":[{"direction":"diangnol", "spaces":8}],
+    "color": "black",
+    "position": "h3"
+  },
+  {
+    "key":27,
+    "piece": "bishop",
+    "move":[{"direction":"diangnol", "spaces":8}],
+    "color": "black",
+    "position": "h6"
+  },
+  {
+    "key":28,
+    "piece": "queen",
+    "move":[{"direction":"any","spaces":8}],
+    "color": "white",
+    "position": "a5"
+  },
+  {
+    "key":29,
+    "piece": "queen",
+    "move":[{"direction":"any","spaces":8}],
+    "color": "black",
+    "position": "h4"
+  },
+  {
+    "key":30,
+    "piece": "king",
+    "move":[{"direction":"any","spaces":1}],
+    "color": "white",
+    "position": "a4"
+  },
+  {
+    "key":31,
+    "piece": "king",
+     "move":[{"direction":"any","spaces":1}],
+    "color": "black",
+    "position": "h5"
+  }
+]

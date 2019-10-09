@@ -89,13 +89,40 @@ class Board extends Component {
 		var x = Number(piece.position[1]);
 		if(piece.init !== true){
 			if(piece.color == "white"){
-				 possible.push(this.vert[Number(y)+1]+String(x));
-				 possible.push(this.vert[Number(y)+2]+String(x));
+				var p1 = this.vert[Number(y)+1]+String(x);
+			 	var p1Check  = _.find(this.state.pieces, ['position', p1]);
+				if(!p1Check){
+					possible.push(p1);
+					var p2 = this.vert[Number(y)+2]+String(x);
+				 	var p2Check  = _.find(this.state.pieces, ['position', p2]);
+					if(!p2Check){
+						possible.push(p2);
+					}
+				}
 			} else{
-				possible.push(this.vert[Number(y)-1]+String(x));
-				possible.push(this.vert[Number(y)-2]+String(x));
+				var p1 = this.vert[Number(y)-1]+String(x);
+			 	var p1Check  = _.find(this.state.pieces, ['position', p1]);
+				if(!p1Check){
+					possible.push(p1);
+					var p2 = this.vert[Number(y)-2]+String(x);
+				 	var p2Check  = _.find(this.state.pieces, ['position', p2]);
+					if(!p2Check){
+						possible.push(p2);
+					}
+				}
 			}
 		} else{
+			if(piece.color == "white"){
+				var moveCheckSpace = this.vert[Number(y)+1]+String(x);
+			} else{
+				var moveCheckSpace = this.vert[Number(y)-1]+String(x);
+			}
+
+			var moveCheck = _.find(this.state.pieces, ['position', moveCheckSpace]);
+			if(!moveCheck){
+				possible.push(moveCheckSpace);
+			}
+		}
 			if(piece.color == "white"){
 				var moveCheckSpace = this.vert[Number(y)+1]+String(x);
 				var killCheck1 = this.vert[Number(y)+1]+String(Number(x)+1);
@@ -105,11 +132,6 @@ class Board extends Component {
 				var killCheck1 = this.vert[Number(y)-1]+String(Number(x)-1);
 				var killCheck2 = this.vert[Number(y)-1]+String(Number(x)+1);
 			}
-
-			var moveCheck = _.find(this.state.pieces, ['position', moveCheckSpace]);
-			if(!moveCheck){
-				possible.push(moveCheckSpace);
-			}
 			killCheck1 = _.find(this.state.pieces, ['position', killCheck1]);
 			killCheck2 = _.find(this.state.pieces, ['position', killCheck2]);
 			if(typeof(killCheck1) !== "undefined" && killCheck1.color !== piece.color){
@@ -118,7 +140,6 @@ class Board extends Component {
 			if(typeof(killCheck2) !== "undefined" && killCheck2.color !== piece.color){
 				possible.push(killCheck2.position);
 			}
-		}
 		return possible;
 	}
 
@@ -164,12 +185,12 @@ class Board extends Component {
 	}
 
 
+
 	validateAcross(piece,possible,direction){
 		var y = Number(this.vert.indexOf(piece.position[0]))+1;
 		var x = Number(piece.position[1]);
 		var remove = [];
 		var flag;
-
 		for (var i = 0; i < 9; i++) {
 			if(direction == "u"){
 				var yCheck = y + i;
@@ -185,7 +206,6 @@ class Board extends Component {
 			else if(direction == "r"){
 				var space = piece.position[0]+String(Number(x)+i);
 			}
-
 			if(this.isRealSpace(space) == true){
 				var spaceCheck = _.find(this.state.pieces, ['position', space]);
 				if(spaceCheck && flag !== true && space !== piece.position){
@@ -201,9 +221,7 @@ class Board extends Component {
 			}
 			
 		}
-		console.log(remove)
 		possible = this.removeFromArray(possible,remove);
-		console.log(possible);
 		return possible;
 	}
 		removeFromArray(original, remove) {
@@ -235,15 +253,43 @@ class Board extends Component {
 
 	bishop(piece){
 		var possible = [];
-		var lineA1 = this.diagonal(piece,"+",'+'),
-			lineA2 = this.diagonal(piece,"-",'-'),
-			lineB1 = this.diagonal(piece,"-",'+'),
-			lineB2 = this.diagonal(piece,"+",'-');
-
-		possible = possible.concat(lineA1); 
-		possible = possible.concat(lineA2); 
-		possible = possible.concat(lineB1);
-		possible = possible.concat(lineB2); 
+		possible = possible.concat(this.validateDiagonal(piece,"ur"));
+		possible = possible.concat(this.validateDiagonal(piece,"ul"));
+		possible = possible.concat(this.validateDiagonal(piece,"dr"));
+		possible = possible.concat(this.validateDiagonal(piece,"dl"));
+		return possible;
+	}
+	
+	validateDiagonal(piece,direction){
+		var y = Number(this.vert.indexOf(piece.position[0]))+1;
+		var x = Number(piece.position[1]);
+		var flag;
+		var possible = [];
+		var getSpaces = this.dDirection(direction,piece,x,y);
+		for (var i = 0; i < getSpaces.length; i++) {
+			var pCheck = _.find(this.state.pieces, ['position', getSpaces[i]]);
+			if(!pCheck){
+				possible.push(getSpaces[i]);
+			} else{
+				if(pCheck.color !== this.state.turn){
+					possible.push(getSpaces[i]);
+				}
+				if(pCheck.position !== piece.position){
+						if(piece.color == "white"){
+							if(getSpaces[i] !== piece.position){
+								var cY = Number(this.vert.indexOf(getSpaces[i])+1);
+								var cX = Number(getSpaces[i][1]);
+								if(pCheck.color == piece.color){
+									break;
+								} else{
+									possible.push(getSpaces[i]);
+									break;
+								}
+							}
+						}
+				}
+			}
+		}
 		return possible;
 	}
 
@@ -254,13 +300,12 @@ class Board extends Component {
 		return possible;
 	}
 
-	diagonal(piece,opperation,direction){
-		var possible = [];
-		var y = Number(this.vert.indexOf(piece.position[0]))+1;
-		x = Number(piece.position[1]);
-		var nY, nX;
+
+	dDirection(direction,piece,x,y){
+		var nY,nX;
+		var results = [];
 		for (var i = 0; i < 9; i++) {
-			if(opperation == "+" && direction == "+"){
+			if(direction == "ur"){
 				if(piece.color == "white"){
 					nY = Number(y)+Number(i);
 					nX = Number(x)+Number(i)+1;
@@ -268,7 +313,7 @@ class Board extends Component {
 					nY = Number(y)-Number(i);
 					nX = Number(x)-Number(i)+1;
 				}
-			} else if(opperation == "+" && direction == "-"){
+			} else if(direction == "ul"){
 				if(piece.color == "white"){
 					nY = Number(y)+Number(i);
 					nX = Number(x)-Number(i)-1;
@@ -276,7 +321,7 @@ class Board extends Component {
 					nY = Number(y)-Number(i);
 					nX = Number(x)+Number(i)-1;
 				}
-			} else if(opperation == "-" && direction == "+"){
+			} else if(direction == "dr"){
 				if(piece.color == "white"){
 					nY = Number(y)-Number(i);
 					nX = Number(x)+Number(i)-1;
@@ -285,7 +330,7 @@ class Board extends Component {
 					nY = Number(y)+Number(i);
 					nX = Number(x)-Number(i)+1;
 				}
-			} else if(opperation == "-" && direction == "-"){
+			} else if(direction == "dl"){
 				if(piece.color == "white"){
 					nY = Number(y)-Number(i);
 					nX = Number(x)-Number(i)+1;
@@ -294,23 +339,12 @@ class Board extends Component {
 					nX = Number(x)+Number(i)+1;
 				}
 			} 
-			var check = this.vert[nY]+String(nX);
-			if(this.isRealSpace(check) && check !== piece.position){
-				var pCheck = _.find(this.state.pieces, ['position', check]);
-				if(pCheck){
-					if(pCheck.color !== this.state.turn){
-						possible.push(check);
-					} else{
-						possible.push("break");
-					}
-					
-				} else{
-						possible.push(check);
-				}
+			var space = this.vert[nY]+String(nX);
+			if(this.isRealSpace(space)){
+				results.push(space); 
 			}
 		}
-
-		return possible;
+		return results;
 	}
 
 	isRealSpace(position){

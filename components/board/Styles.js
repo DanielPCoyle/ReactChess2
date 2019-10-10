@@ -9,7 +9,7 @@ export default StyleSheet.create({
 		flexWrap: 'wrap'
 	}, 
 	itemContainer: {
-		backgroundColor:'#220f11',
+		backgroundColor:'#b24708',
 		width:Dimensions.get('window').width /8,
 		height:60,
 		padding:5

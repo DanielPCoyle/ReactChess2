@@ -27,10 +27,6 @@ class Board extends Component {
 	  return Object.assign({}, src);
 	}
 
-
-	componentDidUpdate(){
-	}
-
 	pieceSelect(piece,turn){
 		if(turn == piece.color){
 			this.setState({"selected":piece.position});
@@ -181,11 +177,8 @@ class Board extends Component {
 	rook(piece){
 		var possible = [];
 		possible = possible.concat(this.acrossPossible(piece));
-
 		return possible;
 	}
-
-
 
 	removeFromArray(original, remove) {
 	  return original.filter(value => !remove.includes(value));
@@ -258,12 +251,11 @@ class Board extends Component {
 		}
 		for (var i = 0; i < spaces.length; i++) {
 			var space = spaces[i];
-			var a = this.vert.indexOf(piece.position[0])+1, // 0 to 7
-		   	    b = parseInt(piece.position[1]);       // 0 to 7
+			var a = this.vert.indexOf(piece.position[0])+1, 
+		   	    b = parseInt(piece.position[1]);       
 		
-			var x = this.vert.indexOf(space[0])+1,   // 0 to 7
-			    y = parseInt(space[1]);         // 0 to 7
-			// test to see how it's moving
+			var x = this.vert.indexOf(space[0])+1,   
+			    y = parseInt(space[1]);  
 			if( a - x === b - y){
 			 if(space == piece.position){
 			    	tl2br.push("current");
@@ -327,10 +319,6 @@ class Board extends Component {
 		}
 		return possible;
 	}
-
-
-
-	
 
 	isRealSpace(position){
 		var check = false;

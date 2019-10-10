@@ -60,7 +60,7 @@ export default StyleSheet.create({
 		color:"white",
 		padding:5,
 		textAlign:"center",
-		marginBottom:5
+		marginBottom:5,
 
 	}
 });

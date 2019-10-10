@@ -28,6 +28,9 @@ class Board extends Component {
 	}
 
 
+	componentDidUpdate(){
+	}
+
 	pieceSelect(piece,turn){
 		if(turn == piece.color){
 			this.setState({"selected":piece.position});
@@ -48,11 +51,12 @@ class Board extends Component {
 				}
 
 				if(piece.color == "white" && space.indexOf("h") > -1 && piece.piece == "pawn"){
-					Alert.alert("Oh Yeah!", "You get another piece!");
+					Alert.alert("Oh Yeah!", "You get another piece!", [{text: "Let's Do It", onPress:() => this.props.navigate('Pieces',{space: space})}]); 
+					
 				}
 
 				if(piece.color == "black" && space.indexOf("a") > -1 && piece.piece == "pawn"){
-					Alert.alert("Oh Yeah!", "You get another piece!", [{text: "Let's Do It", onPress(){ this.pickANewPiece() }} ]); 
+					Alert.alert("Oh Yeah!", "You get another piece!", [{text: "Let's Do It", onPress:() => this.props.navigate('Pieces',{space: space})}]); 
 				}
 				
 			if(existing.indexOf(piece) > -1){
@@ -404,7 +408,6 @@ class Board extends Component {
 			}
 			for (var pSpace of directionArray) {
 				if(pSpace == "g1"){
-					console.log(dKey,"g1");
 				}
 				var pSpaceCheck = _.find(this.state.pieces, ['position', pSpace]);
 	
@@ -439,6 +442,7 @@ class Board extends Component {
 		var positions = {};
 		for (var i = 0; i < pieces.length; i++) {
 			 pieces[i].position = reset[pieces[i].key];
+			 pieces[i].init = false;
 		}
 		this.setState(this.baseState,() => {
 			this.setState({pieces:pieces},() => {
@@ -478,10 +482,12 @@ export default class ChessBoard extends Component {
 	}
 
 	render() {
+		let nPiece = this.props.navigation.state.params ? this.props.navigation.state.params.nPiece : null;
+		console.log(nPiece);
 	  const {navigate} = this.props.navigation;
 	  const template = (
-			<View style={{flex:1}}>
-				<Board />
+			<View style={{flex:1}} nPiece={nPiece}>
+				<Board navigate={navigate}/>
 			      <Text style={styles.btn} onPress={()=> navigate('Pieces')}>Piece Info</Text>
 			</View>
 		);

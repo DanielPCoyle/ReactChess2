@@ -32,7 +32,7 @@ export default class Welcome extends Component {
       <View style={styles.container}>
       <Text style={{fontSize:40}}>2 Player Chess</Text>
       <Image source={{uri: "https://simplerdevelopment.com/assets/king-white.png"}} style={{width: (Dimensions.get('window').width*.60), height: 75,top:100}} resizeMode="contain" />
-	    <Text onPress={()=> navigate('Board', {pieces:require('./board/pieces.json')})} style={styles.btn}>Start Game</Text>
+	    <Text onPress={()=> navigate('Board')} style={styles.btn}>Start Game</Text>
       <Text onPress={()=> navigate('Pieces')} style={{top:300}} >Piece Info</Text>
       </View>
     );

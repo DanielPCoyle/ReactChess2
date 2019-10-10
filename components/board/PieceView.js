@@ -22,23 +22,44 @@ export default class PieceView extends Component {
   };
 
   const {navigate} = this.props.navigation;
-  let pieces = require("./pieces");
+  let nPieceSpace = this.props.navigation.state.params ?  this.props.navigation.state.params.space : null;
+  const pieces = require("./pieces");
   let checked = [];
    let cards = [];
 	for (const [i, piece] of pieces.entries()) {
-		if(checked.indexOf(piece.piece) < 0){
-			checked.push(piece.piece);
-			let pieceImg = "https://simplerdevelopment.com/assets/"+piece.piece+"-"+piece.color+".png";
-			cards.push(
-			<View style={styles.card} key={i}>
-				<Image source={{uri: pieceImg}} style={{width: (Dimensions.get('window').width*.60), height: 75}} resizeMode="contain" />
-				<Text style={styles.headline}>{piece.piece}</Text>
-				<TouchableHighlight  onPress={()=> navigate('Web',{"uri":uris[piece.piece]})} underlayColor='green'>
-					<Text  style={styles.btn}>Piece Info</Text>
-				</TouchableHighlight>
-			</View>
-			);
-		}
+    if(nPieceSpace && piece.piece == "king"){
+
+    }else{
+  		if(checked.indexOf(piece.piece) < 0){
+  			checked.push(piece.piece);
+  			let pieceImg = "https://simplerdevelopment.com/assets/"+piece.piece+"-"+piece.color+".png";
+  			let button
+        if(nPieceSpace){
+          cards.push(
+    			<View style={styles.card} key={i}>
+    				<Image source={{uri: pieceImg}} style={{width: (Dimensions.get('window').width*.60), height: 75}} resizeMode="contain" />
+    				<Text style={styles.headline}>{piece.piece}</Text>
+    				<TouchableHighlight  onPress={()=> navigate('Web',{"uri":uris[piece.piece]})} underlayColor='green'>
+    					<Text  style={styles.btn}>Piece Info</Text>
+    				</TouchableHighlight>
+            <TouchableHighlight  onPress={()=> navigate('Board',{"nPiece":[piece.piece,nPieceSpace:nPieceSpace]})} underlayColor='green'>
+              <Text  style={[styles.btn, {backgroundColor:"blue", color:"white"}]}>Select</Text>
+            </TouchableHighlight>
+    			</View>
+    			);
+        } else{
+          cards.push(
+          <View style={styles.card} key={i}>
+            <Image source={{uri: pieceImg}} style={{width: (Dimensions.get('window').width*.60), height: 75}} resizeMode="contain" />
+            <Text style={styles.headline}>{piece.piece}</Text>
+            <TouchableHighlight  onPress={()=> navigate('Web',{"uri":uris[piece.piece]})} underlayColor='green'>
+              <Text  style={[styles.btn]}>Piece Info</Text>
+            </TouchableHighlight>
+          </View>
+          );
+        }
+  		}
+    }
 	}
     return (
 	 <View style={styles.container}>
@@ -62,7 +83,8 @@ const styles = {
   	padding:5,
   	fontSize:25,
     textAlign: 'center', 
-    width: 100
+    width: 100,
+    marginBottom:10
 
   },
   container:{

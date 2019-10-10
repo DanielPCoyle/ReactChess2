@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
-import { Text, View, TextInput, Dimensions } from 'react-native';
+import { Text, View, Image, Dimensions } from 'react-native';
+
 
 export default class Welcome extends Component {
+
+  static navigationOptions = {
+    header:null
+  }
+
   constructor(props){
     super(props);
     this.handleWhiteChange = this.handleWhiteChange.bind(this);
@@ -24,23 +30,16 @@ export default class Welcome extends Component {
     const {navigate} = this.props.navigation;
     return (
       <View style={styles.container}>
-      	<Text style={styles.label}>Player 1's Name: {this.state.white}</Text>
-	  	<TextInput
-	      style={{ width:Dimensions.get("window").width, height: 40, borderColor: 'gray', borderWidth: 1 }}
-	      onChange={this.handleWhiteChange} 
-	    />
-
-	    <Text style={styles.label}>Player 2's Name: {this.state.black}</Text>
-	  	<TextInput
-	      style={{ width:Dimensions.get("window").width, height: 40, borderColor: 'gray', borderWidth: 1 }}
-         onChange={this.handleBlackChange} 
-	       />
-	    <Text onPress={()=> navigate('Board')} style={styles.btn}>Start Game</Text>
-      <Text onPress={()=> navigate('Pieces')} style={{top:100}} >Piece Info</Text>
+      <Text style={{fontSize:40}}>2 Player Chess</Text>
+      <Image source={{uri: "https://simplerdevelopment.com/assets/king-white.png"}} style={{width: (Dimensions.get('window').width*.60), height: 75,top:100}} resizeMode="contain" />
+	    <Text onPress={()=> navigate('Board', {pieces:require('./board/pieces.json')})} style={styles.btn}>Start Game</Text>
+      <Text onPress={()=> navigate('Pieces')} style={{top:300}} >Piece Info</Text>
       </View>
     );
   }
 }
+
+
 
 const styles = {
 	label:{
@@ -48,7 +47,7 @@ const styles = {
 		fontSize:25
 	},
   btn:{
-  	marginTop:20,
+  	top:200,
   	borderWidth:1,
   	borderRadius:5,
   	borderColor:"blue",

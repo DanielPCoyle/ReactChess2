@@ -19,7 +19,7 @@
     ],
     "kill":{"direction":"forward-diagonal", "spaces" : 1},
     "color": "white",
-    "position": "f1"
+    "position": "b2"
   },
   {
     "key":2,

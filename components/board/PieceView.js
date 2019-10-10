@@ -29,9 +29,8 @@ export default class PieceView extends Component {
 		if(checked.indexOf(piece.piece) < 0){
 			checked.push(piece.piece);
 			let pieceImg = "https://simplerdevelopment.com/assets/"+piece.piece+"-"+piece.color+".png";
-			console.log(pieceImg);
 			cards.push(
-			<View style={styles.card}>
+			<View style={styles.card} key={i}>
 				<Image source={{uri: pieceImg}} style={{width: (Dimensions.get('window').width*.60), height: 75}} resizeMode="contain" />
 				<Text style={styles.headline}>{piece.piece}</Text>
 				<TouchableHighlight  onPress={()=> navigate('Web',{"uri":uris[piece.piece]})} underlayColor='green'>

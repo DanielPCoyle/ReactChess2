@@ -1,37 +1,40 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions, TouchableHighlight,Alert } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-
 let _ = require('lodash'),
 flip = require('flipout');
-const pieces = require("./pieces.json");
-
-
-
+import Spaces from "./Spaces.js"
+import styles from './Styles'
 
 class Board extends Component {
-
 	constructor(props){
 		super(props)
 		this.state = {
 			board:require('./board.json'),
-			pieces:props.pieces,
+			pieces:require('./pieces.json'),
 			possible:[],
-			turn:props.turn,
+			spaces:null,
+			turn:"white",
+			spacesRefreshIndex:0,
 		}
+		this.baseState = this.state;
 		this.vert = ["a","b","c","d","e","f","g",'h'];
+		this.pieceSelect = this.pieceSelect.bind(this);
+		this.pieceMove = this.pieceMove.bind(this);
+
+	}
+
+	 bestCopyEver(src) {
+	  return Object.assign({}, src);
 	}
 
 
-
-	pieceSelect(piece,filled){
-		if(this.state.turn == piece.color){
+	pieceSelect(piece,turn){
+		if(turn == piece.color){
 			this.setState({"selected":piece.position});
 			this.setState({"possible":this.possibleMoves(piece)+" "+piece.piece});
 		} else {
 			Alert.alert("Opps!", "It is not your turn",[{text: 'Ok Cool', onPress:null}] );
 		}
-
 	}
 
 	pieceMove(space,piece){
@@ -173,60 +176,16 @@ class Board extends Component {
 
 	rook(piece){
 		var possible = [];
-		possible = possible.concat(this.acrossPossible(piece, "yu"));
-		possible = possible.concat(this.acrossPossible(piece, "yd"));
-		possible = possible.concat(this.acrossPossible(piece, "xl"));
-		possible = possible.concat(this.acrossPossible(piece, "xr"));
-		possible = this.validateAcross(piece,[ ...new Set(possible) ],"u");
-		possible = this.validateAcross(piece,possible,"d");
-		possible = this.validateAcross(piece,possible,"l");
-		possible = this.validateAcross(piece,possible,"r");
+		possible = possible.concat(this.acrossPossible(piece));
+
 		return possible;
 	}
 
 
 
-	validateAcross(piece,possible,direction){
-		var y = Number(this.vert.indexOf(piece.position[0]))+1;
-		var x = Number(piece.position[1]);
-		var remove = [];
-		var flag;
-		for (var i = 0; i < 9; i++) {
-			if(direction == "u"){
-				var yCheck = y + i;
-				var space = this.vert[yCheck]+String(x);
-			}
-			if(direction == "d"){
-				var yCheck = y - i;
-				var space = this.vert[yCheck]+String(x);
-			}
-			else if(direction == "l"){
-				var space = piece.position[0]+String(Number(x)-i);
-			}
-			else if(direction == "r"){
-				var space = piece.position[0]+String(Number(x)+i);
-			}
-			if(this.isRealSpace(space) == true){
-				var spaceCheck = _.find(this.state.pieces, ['position', space]);
-				if(spaceCheck && flag !== true && space !== piece.position){
-					flag = true;
-					var pCheck = _.find(this.state.pieces, ['position', space]);
-					if(pCheck.color == this.state.turn){
-						remove.push(space);
-					}
-				}
-				else if(flag == true){
-					remove.push(space);
-				}
-			}
-			
-		}
-		possible = this.removeFromArray(possible,remove);
-		return possible;
+	removeFromArray(original, remove) {
+	  return original.filter(value => !remove.includes(value));
 	}
-		removeFromArray(original, remove) {
-		  return original.filter(value => !remove.includes(value));
-		}
 
 	king(piece){
 		var y = this.vert.indexOf(piece.position[0]);
@@ -253,45 +212,10 @@ class Board extends Component {
 
 	bishop(piece){
 		var possible = [];
-		possible = possible.concat(this.validateDiagonal(piece,"ur"));
-		possible = possible.concat(this.validateDiagonal(piece,"ul"));
-		possible = possible.concat(this.validateDiagonal(piece,"dr"));
-		possible = possible.concat(this.validateDiagonal(piece,"dl"));
+		possible = possible.concat(this.validateDiagonal(piece));
 		return possible;
 	}
-	
-	validateDiagonal(piece,direction){
-		var y = Number(this.vert.indexOf(piece.position[0]))+1;
-		var x = Number(piece.position[1]);
-		var flag;
-		var possible = [];
-		var getSpaces = this.dDirection(direction,piece,x,y);
-		for (var i = 0; i < getSpaces.length; i++) {
-			var pCheck = _.find(this.state.pieces, ['position', getSpaces[i]]);
-			if(!pCheck){
-				possible.push(getSpaces[i]);
-			} else{
-				if(pCheck.color !== this.state.turn){
-					possible.push(getSpaces[i]);
-				}
-				if(pCheck.position !== piece.position){
-						if(piece.color == "white"){
-							if(getSpaces[i] !== piece.position){
-								var cY = Number(this.vert.indexOf(getSpaces[i])+1);
-								var cX = Number(getSpaces[i][1]);
-								if(pCheck.color == piece.color){
-									break;
-								} else{
-									possible.push(getSpaces[i]);
-									break;
-								}
-							}
-						}
-				}
-			}
-		}
-		return possible;
-	}
+
 
 	queen(piece){
 		var possible = [];
@@ -299,53 +223,110 @@ class Board extends Component {
 		possible = possible.concat(this.rook(piece,"+",'+'));
 		return possible;
 	}
-
-
-	dDirection(direction,piece,x,y){
-		var nY,nX;
-		var results = [];
-		for (var i = 0; i < 9; i++) {
-			if(direction == "ur"){
-				if(piece.color == "white"){
-					nY = Number(y)+Number(i);
-					nX = Number(x)+Number(i)+1;
-				} else{
-					nY = Number(y)-Number(i);
-					nX = Number(x)-Number(i)+1;
-				}
-			} else if(direction == "ul"){
-				if(piece.color == "white"){
-					nY = Number(y)+Number(i);
-					nX = Number(x)-Number(i)-1;
-				} else{
-					nY = Number(y)-Number(i);
-					nX = Number(x)+Number(i)-1;
-				}
-			} else if(direction == "dr"){
-				if(piece.color == "white"){
-					nY = Number(y)-Number(i);
-					nX = Number(x)+Number(i)-1;
-
-				} else{
-					nY = Number(y)+Number(i);
-					nX = Number(x)-Number(i)+1;
-				}
-			} else if(direction == "dl"){
-				if(piece.color == "white"){
-					nY = Number(y)-Number(i);
-					nX = Number(x)-Number(i)+1;
-				} else{
-					nY = Number(y)+Number(i);
-					nX = Number(x)+Number(i)+1;
-				}
+	
+	validateDiagonal(piece){
+		var y = Number(this.vert.indexOf(piece.position[0]))+1;
+		var x = Number(piece.position[1]);
+		var flag;
+		var possible = [];
+		var bl2tr = [];
+		var tl2br = [];
+		var spaces = [];
+		var direction = {};
+		for (var i = 0; i < this.state.board.length; i++) {
+			spaces = spaces.concat(this.state.board[i]);
+		}
+		for (var i = 0; i < spaces.length; i++) {
+			var space = spaces[i];
+			var a = this.vert.indexOf(piece.position[0])+1, // 0 to 7
+		   	    b = parseInt(piece.position[1]);       // 0 to 7
+		
+			var x = this.vert.indexOf(space[0])+1,   // 0 to 7
+			    y = parseInt(space[1]);         // 0 to 7
+			// test to see how it's moving
+			if (a + b === x + y) {  
+			    if(space == piece.position){
+			    	bl2tr.push("current");
+			    } else{
+			    	bl2tr.push(space);
+			    }
 			} 
-			var space = this.vert[nY]+String(nX);
-			if(this.isRealSpace(space)){
-				results.push(space); 
+		}
+		for (var i = 0; i < spaces.length; i++) {
+			var space = spaces[i];
+			var a = this.vert.indexOf(piece.position[0])+1, // 0 to 7
+		   	    b = parseInt(piece.position[1]);       // 0 to 7
+		
+			var x = this.vert.indexOf(space[0])+1,   // 0 to 7
+			    y = parseInt(space[1]);         // 0 to 7
+			// test to see how it's moving
+			if( a - x === b - y){
+			 if(space == piece.position){
+			    	tl2br.push("current");
+			    } else{
+			    	tl2br.push(space);
+			    }
 			}
 		}
-		return results;
+
+		var split = false;
+		 direction["tr"] = [];
+		 direction["bl"] = [];
+		for (var i = 0; i < bl2tr.length; i++) {
+			var cSpace = bl2tr[i];
+			if(cSpace == "current"){
+				split = true;
+			} else{
+				if(split == false){
+					direction["tr"].push(cSpace);
+				} else{
+					direction["bl"].push(cSpace);
+				}
+			}
+		}
+		split = false;
+		direction["tl"] = [];
+		direction["br"] = [];
+		for (var i = 0; i < tl2br.length; i++) {
+			 cSpace = tl2br[i];
+ 			if(cSpace == "current"){
+				split = true;
+			} else{
+				if(split == false){
+					direction["tl"].push(cSpace);
+				} else{
+					direction["br"].push(cSpace);
+				}
+			}
+		}
+		var dKeys = Object.keys(direction);
+		for (var i = 0; i < dKeys.length; i++) {
+			var d = dKeys[i];
+			var dArray = direction[d];
+			if((d == "tr") || (d == "tl")) {
+				dArray = dArray.reverse();
+			}
+
+
+			for(const pSpace of dArray){
+				var pSpaceCheck = _.find(this.state.pieces, ['position', pSpace]);
+				if(pSpaceCheck){
+
+					if(pSpaceCheck.color !== piece.color){
+						possible.push(pSpace);
+					}
+					break;
+				} else{
+					possible.push(pSpace);
+				}
+			}
+		}
+		return possible;
 	}
+
+
+
+	
 
 	isRealSpace(position){
 		var check = false;
@@ -357,35 +338,84 @@ class Board extends Component {
 		return check;
 	}
 
-	acrossPossible(piece, axis){
+
+	acrossPossible(piece){
 		var possible = [];
 		var results = [];
-		var y = this.vert.indexOf(piece.position[0])+1;
-		var x = piece.position[1];
-		var check = [];
-		for (var i = 0; i < 16; i++) {
-			if(axis == "yu"){
-				 check.push(this.vert[Number(y)+i]+String(x));
-			}
-			if(axis == "yd"){
-				 check.push(this.vert[Number(y)-i]+String(x));
+		var spaces = [];
+		var lines = {};
+		 lines['upDown'] = [];
+		 lines['leftRight'] = [];
+		var direction = {};
+			direction["up"] = [];
+			direction["down"] = [];
+			direction["left"] = [];
+			direction["right"] = [];
+		for (var i = 0; i < this.state.board.length; i++) {
+			spaces = spaces.concat(this.state.board[i]);
+		}
+		for (var i = 0; i < spaces.length; i++) {
+			var space = spaces[i];
+			var a = this.vert.indexOf(piece.position[0])+1, 
+			    b = parseInt(piece.position[1]);       
+			var x = this.vert.indexOf(space[0])+1,   
+			    y = parseInt(space[1]);         
+			if (a === x) {           
+			   lines['leftRight'].push(space);
 			} 
-			if(axis == "xl"){
-			 	check.push(String(piece.position[0])+String(Number(x)-i));
+			if(b === y){
+			    lines['upDown'].push(space);
 			} 
-			if(axis == "xr"){
-			 	check.push(String(piece.position[0])+String(Number(x)+i));
+		}
+
+		var lKeys = Object.keys(lines);
+		for (var i = 0; i < lKeys.length; i++) {
+			lKey = lKeys[i];
+			var split = false;
+			for (var cSpace of  lines[lKey]) {
+				if(cSpace == piece.position){
+					cSpace = "current";
+					split = true;
+				}
+				if(lKey == "upDown"){
+					if(split == false){
+						direction["up"].push(cSpace);
+					} else{
+						direction["down"].push(cSpace);
+					}
+				} else{
+					if(split == false){
+						direction["left"].push(cSpace);
+					} else{
+						direction["right"].push(cSpace);
+					}
+				}
 			}
 		}
-		for (var index = 0; index < check.length; index++) {
-			if(this.isRealSpace(check[index]) && check[index] !== piece.position){
-				var pCheck = _.find(this.state.pieces, ['position', check[index]]);
-				if(pCheck){
-					if(pCheck.color !== this.state.turn){
-						possible.push(check[index]);
+		var dKeys = Object.keys(direction);
+		for (var i = 0; i < dKeys.length; i++) {
+			var dKey = dKeys[i];
+			var directionArray = direction[dKey];
+			if( dKey == "up" ){
+				directionArray = directionArray.reverse();
+			}
+			if((dKey == "left") ){
+				directionArray = directionArray.reverse();
+			}
+			for (var pSpace of directionArray) {
+				if(pSpace == "g1"){
+					console.log(dKey,"g1");
+				}
+				var pSpaceCheck = _.find(this.state.pieces, ['position', pSpace]);
+	
+				if(pSpaceCheck){
+					if(pSpaceCheck.color !== piece.color){
+						possible.push(pSpace);
 					}
-				} 
-					possible.push(check[index]);
+					break;
+				}else{
+					possible.push(pSpace);
+				}
 			}
 		}
 		return possible;
@@ -403,81 +433,34 @@ class Board extends Component {
 		return false;
 	}
 
-
-	spaces(){
-		const  spaces = [];
-		var  rowStart;
-		var  itemStyle;
-		var  pieceImg;
-		var  squareStyle;
-		for (const [rowIndex, row] of this.state.board.entries()) {
-			spaces[rowIndex] = []; 
-			if (rowIndex%2 == 0){
-				rowStart = 0;
-			} else {
-				rowStart = 1;
-			}
-			for(const [itemIndex, item] of row.entries()){
-				let piece = _.find(this.state.pieces, ['position', item]) || null;
-				squareStyle = [styles.itemContainer]
-				if ((itemIndex+rowStart)%2 == 0){
-				} else{
-					squareStyle.push(styles.odd);
-				}
-				if(this.state.possible.indexOf(item) > -1){
-					squareStyle.push(styles.possible);
-				}
-
-				if(piece){
-					if(piece.position == this.state.selected){
-						squareStyle.push(styles.selected);
-					}
-					pieceImg = "https://simplerdevelopment.com/assets/"+piece.piece+"-"+piece.color+".png";
-					if(this.state.possible.indexOf(item) > -1){
-						spaces[rowIndex].push(
-							<View style={squareStyle} key={itemIndex}>
-							<TouchableHighlight onPress={() => this.pieceMove(item,this.state.selected)} underlayColor='green'>
-							<Image source={{uri: pieceImg}} style={{width: 40, height: 40}} />
-							</TouchableHighlight>
-							</View>);
-					} else{
-						spaces[rowIndex].push(
-							<View style={squareStyle} key={itemIndex}>
-							<TouchableHighlight onPress={() => this.pieceSelect(piece)} underlayColor='orange'>
-							<Image source={{uri: pieceImg}} style={{width: 40, height: 40}} />
-							</TouchableHighlight>
-							</View>);
-					}
-				} else{
-					if(this.state.possible.indexOf(item) > -1){
-						spaces[rowIndex].push(
-							<TouchableHighlight key={itemIndex}  onPress={() => this.pieceMove(item,this.state.selected)} underlayColor='green'>
-							<View style={squareStyle} >
-							<Text>{item}</Text>
-							</View>
-							</TouchableHighlight>
-							);
-					} else{
-						spaces[rowIndex].push(<View style={squareStyle} key={itemIndex}><Text>{item}</Text></View>);
-					}
-				}
-			}
+	newGame(){
+		const reset = require('./reset.json');
+		const pieces = Array.from(require('./pieces.json'));
+		var positions = {};
+		for (var i = 0; i < pieces.length; i++) {
+			 pieces[i].position = reset[pieces[i].key];
 		}
-		return spaces;
+		this.setState(this.baseState,() => {
+			this.setState({pieces:pieces},() => {
+			});
+		})
 	}
-
-	pickANewPiece(){
-		return null;
-	}
-
 
 	render() {
-		let spaces = this.spaces();
 		return (
-			<View style={[styles.container,styles[this.state.turn],{backgroundColor:this.state.turn}]}>
+			<View key={this.state.spacesRefreshIndex} style={[styles.container,styles[this.state.turn],{backgroundColor:this.state.turn}]}>
 			<Text style={[styles.turn, {color:this.state.turn == "white" ? "black" : "white"}]}>{flip(this.state.turn+"'s turn")}</Text>
-			{spaces}
+			<Spaces 
+			possible={this.state.possible} 
+			board={this.state.board}
+			pieces={this.state.pieces} 
+			pieceMove={this.pieceMove}
+			pieceSelect={this.pieceSelect}
+			turn={this.state.turn}
+			selected={this.state.selected}
+			possible={this.state.possible}/>
 			<Text style={[styles.turn, {color:this.state.turn == "white" ? "black" : "white"}]}>{this.state.turn+"'s turn"}</Text>
+			<Text style={[styles.btn]} onPress={() => this.newGame()}>New Game</Text>		
 			</View>
 			);
 	}
@@ -492,83 +475,17 @@ export default class ChessBoard extends Component {
 
 	constructor(props){
 		super(props);
-		this.state = {
-			pieces : require('./pieces.json'),
-			turn:"white",
-		};
-	}
-
-	newGame(){
 	}
 
 	render() {
-		const  template = (
+	  const {navigate} = this.props.navigation;
+	  const template = (
 			<View style={{flex:1}}>
-			<Board pieces={this.state.pieces} turn={this.state.turn}/>
-			<Text style={styles.btn} onPress={() => this.setState({pieces:{}})}>New Game</Text>
+				<Board />
+			      <Text style={styles.btn} onPress={()=> navigate('Pieces')}>Piece Info</Text>
 			</View>
-			);
+		);
 		return template;
 	}
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		marginTop:20,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		flexDirection: 'row',
-		flexWrap: 'wrap'
-	}, 
-	itemContainer: {
-		backgroundColor:'#220f11',
-		width:Dimensions.get('window').width /8,
-		height:60,
-		padding:5
-	},
-	odd:{
-		backgroundColor:'#e3d2a3'
-	},
-	piece:{
-		borderWidth: 0.5,
-		borderColor: '#d6d7da',
-		backgroundColor:"white",
-		color:'black',
-		fontSize:10,
-	},
-	selected:{
-		backgroundColor: "orange"
-	},
-	possible:{
-		backgroundColor: "rgb(255, 255, 0)",
-		borderColor:'black',
-		borderWidth:1,
-	},
-	kill:{
-		backgroundColor: "green",
-		borderColor:'green',
-		borderWidth:1,
-	},
-	white:{
-		backgroundColor:"white",
-	},
-	black:{
-		backgroundColor:"white",
-	},
-	turn:{
-		width:Dimensions.get("window").width,
-		fontSize:30,
-	},
-	turnUpsideDown:{
-		width:Dimensions.get("window").width,
-		fontSize:30,
-	},
-	btn:{
-		borderWidth:1,
-		borderRadius:5,
-		borderColor:"blue",
-		padding:5
-
-	}
-});

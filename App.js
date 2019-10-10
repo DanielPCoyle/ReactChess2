@@ -5,7 +5,7 @@ import Board from './components/board/Board';
 import Welcome from './components/Welcome';
 import Web from './components/Web';
 import PieceView from './components/board/PieceView';
-
+console.ignoredYellowBox = ['Warning: Each'];
 
 const MainNavigator = createStackNavigator({
   Home: {screen: Welcome},

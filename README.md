@@ -1,1 +1,10 @@
-chess1
+# Install
+
+``` 
+npm install
+```
+
+# Serve
+```
+npm start
+```

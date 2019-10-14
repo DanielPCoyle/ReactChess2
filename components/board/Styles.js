@@ -61,6 +61,5 @@ export default StyleSheet.create({
 		padding:5,
 		textAlign:"center",
 		marginBottom:5,
-
 	}
 });
